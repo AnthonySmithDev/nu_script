@@ -259,7 +259,7 @@ def exclusion [] {
   }
 }
 
-export def "repos update" [...names: string@names] {
+export def "repo update" [...names: string@names] {
   let changelog_dir = ($env.TMP_PATH_FILE | path join changelog)
   rm -rf $changelog_dir
   mkdir $changelog_dir
@@ -349,7 +349,7 @@ export def "repos update" [...names: string@names] {
   }
 }
 
-export def "repos upgrade" [] {
+export def "repo upgrade" [] {
   let rate_limit = rate_limit
   if $rate_limit.remaining == 0 {
     return ($rate_limit | select reset remaining)

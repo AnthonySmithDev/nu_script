@@ -2957,3 +2957,17 @@ export def lumen [ --force(-f) ] {
 
   bind-file lumen $path
 }
+
+export def gfold [ --force(-f) ] {
+  let repository = 'nickgerace/gfold'
+  let tag_name = ghub tag_name $repository
+  let path = bin-path gfold $tag_name
+
+  if (path-not-exists $path $force) {
+    let download_path = ghub asset download $repository --force=($force)
+    move -f $download_path -p $path
+    add-execute $path
+  }
+
+  bind-file gfold $path
+}
