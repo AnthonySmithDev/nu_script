@@ -1772,7 +1772,7 @@ export def local-ai [ --force(-f) ] {
   bind-file local-ai $path
 }
 
-export def lan-mouse [ --desktop(-d), --service(-s), --force(-f) ] {
+export def lan-mouse [ --force(-f) ] {
   let repository = 'feschber/lan-mouse'
   let tag_name = ghub tag_name $repository
   let path = bin-path lan-mouse $tag_name
@@ -1784,19 +1784,6 @@ export def lan-mouse [ --desktop(-d), --service(-s), --force(-f) ] {
   }
 
   bind-file lan-mouse $path
-
-  if $desktop {
-    let src = ($env.NU_BASE_FILES | path join applications lan-mouse.desktop)
-    cp $src $env.LOCAL_SHARE_APPLICATIONS
-  }
-
-  if $service {
-    let src = ($env.SYSTEMD_USER_SRC | path join lan-mouse.service)
-    cp $src ~/.config/systemd/user
-    systemctl --user daemon-reload
-    systemctl --user enable lan-mouse.service
-    systemctl --user start lan-mouse.service
-  }
 }
 
 export def lapce [ --force(-f) ] {

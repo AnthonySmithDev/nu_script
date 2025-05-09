@@ -415,7 +415,7 @@ def android-studio-latest [] {
   curl -s https://developer.android.com/studio | grep -oP 'ide-zips/\K[^/]+' | head -1
 }
 
-export def --env android-studio [ --desktop(-d), --force(-f) ] {
+export def --env android-studio [ --force(-f) ] {
   let version = android-studio-latest
   print-version "Android Studio" $version
 
@@ -429,11 +429,6 @@ export def --env android-studio [ --desktop(-d), --force(-f) ] {
 
   bind-dir $path $env.ANDROID_STUDIO_PATH
   env-path $env.ANDROID_STUDIO_BIN
-
-  if $desktop {
-    let src = ($env.NU_BASE_FILES | path join applications android-studio.desktop)
-    cp $src $env.LOCAL_SHARE_APPLICATIONS
-  }
 }
 
 export def --env android-cmdline-tools [ --force(-f) ] {

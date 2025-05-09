@@ -107,7 +107,7 @@ def mouseless-completions [] {
 }
 
 export def mouseless [completion: string@mouseless-completions] {
-  bind $"mouseless/($completion).yml" mouseless/config.yaml
+  bind $"mouseless/($completion).yaml" mouseless/config.yaml
 }
 
 def lan-mouse-completions [] {
@@ -163,4 +163,16 @@ export def git [] {
   ^git config --global init.defaultBranch 'main'
   ^git config --global user.name $env.GIT_USER_NAME
   ^git config --global user.email $env.GIT_USER_EMAIL
+}
+
+export def core [] {
+  nushell
+  helix
+  bat
+  mods
+  yazi
+  zellij
+  wezterm
+
+  vieb
 }

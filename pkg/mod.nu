@@ -1,5 +1,8 @@
 
 export-env {
+  $env.TMP_PATH_FILE = ($env.HOME | path join tmp/file)
+  $env.TMP_PATH_DIR = ($env.HOME | path join tmp/dir)
+
   $env.SCRIPT_DIR_SRC = ($env.HOME | path join nu/nu_files/script)
   $env.GITHUB_REPOSITORY = ($env.HOME | path join nu/nu_files/config/ghub/ghub.json)
 
