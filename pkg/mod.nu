@@ -12,10 +12,10 @@ export-env {
 
 export use ../ghub
 
+export use apt.nu
 export use deps.nu
 export module bin
 export module sh.nu
-export module apt.nu
 export module deb.nu
 export module arch.nu
 export module go.nu

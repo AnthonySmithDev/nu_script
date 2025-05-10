@@ -2,6 +2,9 @@
 export-env {
   $env.GITHUB_REPOSITORY = ($env.HOME | path join nu/nu_files/config/ghub/ghub.json)
   $env.GITHUB_REPOSITORY_INDEX = ($env.HOME | path join .github-index)
+
+  $env.TMP_PATH_FILE = ($env.HOME | path join tmp/file)
+  $env.TMP_PATH_DIR = ($env.HOME | path join tmp/dir)
 }
 
 export def names [] {
@@ -312,7 +315,7 @@ export def "repo update" [...names: string@names] {
       print $"(link $old.name $old.tag_name) (white $old_version) (italic $new_created_at)"
       continue
     }
-    if ($old.assets | is-not-empty) {
+    if ($old.assets? | is-not-empty) {
       if ($new.assets | length) < 1 {
         print $"(link $old.name $new.tag_name) (purple $old_version) (cyan $new_version) (italic $new_created_at)"
         continue
@@ -338,7 +341,7 @@ export def "repo update" [...names: string@names] {
     $new.body | save --force $changelog_file
   }
 
-  if (ls $changelog_dir | is-not-empty) {
+  if ($names | is-empty) and (ls $changelog_dir | is-not-empty) {
     if (confirm see changelog...?) {
       glow $changelog_dir
     }

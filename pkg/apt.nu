@@ -12,11 +12,6 @@ export def browsers [] {
   microsoft-edge
 }
 
-export def update [] {
-  sudo apt update -y
-  sudo apt upgrade -y
-}
-
 def add-universe [] {
   let deb = 'deb http://archive.ubuntu.com/ubuntu/ mantic universe'
   if (open /etc/apt/sources.list | lines | find $deb | is-empty) {
@@ -45,7 +40,7 @@ export def nala [] {
   sudo apt install -y nala
 }
 
-export def apt-install [...packages: string] {
+export def install [...packages: string] {
   if (exists-external nala) {
     sudo nala install -y ...$packages
   } else {
@@ -53,11 +48,27 @@ export def apt-install [...packages: string] {
   }
 }
 
-export def apt-update [] {
+export def xinstall [...packages: string] {
+  if (exists-external xnala) {
+    sudo xnala install -y ...$packages
+  } else {
+    sudo xapt install -y ...$packages
+  }
+}
+
+export def update [] {
   if (exists-external nala) {
     sudo nala update
   } else {
     sudo apt update
+  }
+}
+
+export def upgrade [...packages: string] {
+  if (exists-external nala) {
+    sudo nala upgrade -y ...$packages
+  } else {
+    sudo apt upgrade -y ...$packages
   }
 }
 
@@ -271,7 +282,7 @@ export def dependency [] {
     gnome-screenshot
   ] | uniq)
 
-  apt-install ...$packages
+  install ...$packages
 
   # sudo systemctl enable ssh
   # sudo systemctl start ssh
@@ -279,34 +290,34 @@ export def dependency [] {
 
 export def helix [] {
   sudo add-apt-repository -y ppa:maveonair/helix-editor
-  apt-update
-  apt-install helix
+  update
+  install helix
 }
 
 export def alacritty [] {
   sudo add-apt-repository -y ppa:aslatter/ppa
-  apt-update
-  apt-install alacritty
+  update
+  install alacritty
 }
 
 export def chafa [] {
-  apt-install chafa
+  install chafa
 }
 
 export def keepassxc [] {
   sudo add-apt-repository -y ppa:phoerious/keepassxc
-  apt-update
-  apt-install keepassxc
+  update
+  install keepassxc
 }
 
 export def snap [] {
-  apt-update
-  apt-install snapd
+  update
+  install snapd
 }
 
 export def speedtest [] {
   curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
-  apt-install speedtest
+  install speedtest
 }
 
 export def flathub [] {
@@ -314,29 +325,29 @@ export def flathub [] {
     return
   }
 
-  apt-install flatpak
-  apt-install gnome-software-plugin-flatpak
+  install flatpak
+  install gnome-software-plugin-flatpak
   flatpak remote-add --if-not-exists flathub 'https://flathub.org/repo/flathub.flatpakrepo'
 }
 
 export def cpp [] {
-  apt-install g++ gdb clangd clang-format clang-tidy cppcheck
+  install g++ gdb clangd clang-format clang-tidy cppcheck
 
   # sudo add-apt-repository PPA:codeblocks-devs/release
-  # apt-update
-  # apt-install codeblocks codeblocks-contrib
+  # update
+  # install codeblocks codeblocks-contrib
 }
 
 export def python [] {
-  apt-install python3-full python3 python3-pip python3-venv pipx
+  install python3-full python3 python3-pip python3-venv pipx
 }
 
 export def java [] {
-  # apt-install openjdk-8-jdk
-  # apt-install openjdk-11-jdk
-  # apt-install openjdk-17-jdk
-  # apt-install openjdk-21-jdk
-  apt-install default-jdk
+  # install openjdk-8-jdk
+  # install openjdk-11-jdk
+  # install openjdk-17-jdk
+  # install openjdk-21-jdk
+  install default-jdk
 }
 
 export def dart [] {
@@ -348,14 +359,14 @@ export def dart [] {
   echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main'
   | sudo tee '/etc/apt/sources.list.d/dart_stable.list' | ignore
 
-  apt-update
-  apt-install dart
+  update
+  install dart
 }
 
 export def libwebkit2gtk [] {
   "deb http://archive.ubuntu.com/ubuntu jammy main"
-  apt-update
-  apt-install ibwebkit2gtk-4.0-dev
+  update
+  install ibwebkit2gtk-4.0-dev
 }
 
 def exists [ app: string ] {
@@ -373,8 +384,8 @@ export def brave [ --force(-f) ] {
   echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
   | sudo tee /etc/apt/sources.list.d/brave-browser-release.list | ignore
 
-  apt-update
-  apt-install brave-browser
+  update
+  install brave-browser
 }
 
 export def docker [] {
@@ -388,7 +399,7 @@ export def docker [] {
   }
 
   try {
-    sudo apt-install -m 0755 -d /etc/apt/keyrings
+    sudo install -m 0755 -d /etc/apt/keyrings
 
     curl -fsSL 'https://download.docker.com/linux/ubuntu/gpg'
     | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg | ignore
@@ -402,7 +413,7 @@ export def docker [] {
   echo $'deb [arch=($arch) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ($codename) stable'
   | sudo tee /etc/apt/sources.list.d/docker.list | ignore
 
-  apt-update
+  update
 
   let packages = [
     docker-ce
@@ -412,7 +423,7 @@ export def docker [] {
     docker-compose-plugin
   ]
 
-  apt-install ...$packages
+  install ...$packages
 
   # sudo groupadd docker
   sudo usermod -aG docker $env.USER
@@ -473,15 +484,15 @@ export def regolith [ --force(-f), --beta(-b) ] {
     i3xrocks-battery
   ]
 
-  apt-update
-  apt-install ...$packages
-  sudo apt upgrade -y
+  update
+  install ...$packages
+  upgrade
 }
 
 export def remmina [] {
   sudo apt-add-repository ppa:remmina-ppa-team/remmina-next
-  apt-update
-  apt-install remmina remmina-plugin-rdp remmina-plugin-secret
+  update
+  install remmina remmina-plugin-rdp remmina-plugin-secret
 }
 
 export def vagrant [] {
@@ -491,13 +502,13 @@ export def vagrant [] {
   echo $"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
   | sudo tee /etc/apt/sources.list.d/hashicorp.list
 
-  apt-update
-  apt-install vagrant
+  update
+  install vagrant
 }
 
 export def qemu [] {
-  apt-update
-  apt-install qemu-system-x86
+  update
+  install qemu-system-x86
 }
 
 export def waydroid [] {
@@ -507,9 +518,9 @@ export def waydroid [] {
     bash INSTALL.sh
   }
 
-  apt-install curl ca-certificates
+  install curl ca-certificates
   curl https://repo.waydro.id | sudo bash
-  apt-install waydroid
+  install waydroid
 
   sudo waydroid init -s GAPPS
   sudo systemctl enable --now waydroid-container
@@ -530,38 +541,38 @@ export def waydroid [] {
 }
 
 export def obs [] {
-  apt-install ffmpeg
+  install ffmpeg
   sudo add-apt-repository -y ppa:obsproject/obs-studio
-  apt-update
-  apt-install obs-studio
+  update
+  install obs-studio
 }
 
 export def podman [] {
-  apt-update
-  apt-install podman
+  update
+  install podman
 }
 
 export def sftpgo [] {
   sudo add-apt-repository -y ppa:sftpgo/sftpgo
-  apt-update
-  apt-install sftpgo
+  update
+  install sftpgo
   systemctl status sftpgo
 }
 
 export def timg [] {
-  apt-install timg
+  install timg
 }
 
 export def nautilus [] {
-  apt-install nautilus
+  install nautilus
 }
 
 export def gparted [] {
-  apt-install gparted
+  install gparted
 }
 
 export def sixel [] {
-  apt-install libsixel-dev libsixel1 libsixel-bin
+  install libsixel-dev libsixel1 libsixel-bin
 }
 
 export def unityhub [] {
@@ -571,8 +582,8 @@ export def unityhub [] {
   echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" 
   | sudo tee '/etc/apt/sources.list.d/unityhub.list' | ignore
 
-  apt-update
-  apt-install unityhub
+  update
+  install unityhub
 }
 
 export def windsurf [] {
@@ -582,14 +593,14 @@ export def windsurf [] {
   echo "deb [signed-by=/usr/share/keyrings/windsurf-stable-archive-keyring.gpg arch=amd64] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main"
   | sudo tee /etc/apt/sources.list.d/windsurf.list | ignore
 
-  apt-update
-  sudo apt upgrade -y windsurf
+  update
+  upgrade windsurf
 }
 
 export def mixxx [] {
   sudo add-apt-repository -y ppa:mixxx/mixxx
-  apt-update
-  apt-install mixxx
+  update
+  install mixxx
 }
 
 export def cloudflare-warp [] {
@@ -599,8 +610,8 @@ export def cloudflare-warp [] {
   echo $"deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ (lsb_release -cs) main"
   | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
-  apt-update
-  apt-install cloudflare-warp
+  update
+  install cloudflare-warp
 }
 
 export def wezterm [] {
@@ -611,6 +622,6 @@ export def wezterm [] {
   | sudo tee /etc/apt/sources.list.d/wezterm.list
 
   sudo chmod 644 /usr/share/keyrings/wezterm-fury.gpg
-  apt-update
-  apt-install wezterm
+  update
+  install wezterm
 }

@@ -34,7 +34,7 @@ export def alacritty [] {
 }
 
 export def ghostty [] {
-  sudo apt install libgtk-4-dev libadwaita-1-dev git
+  apt install libgtk-4-dev libadwaita-1-dev git
 
   let source = ($env.USR_LOCAL_SOURCE | path join ghostty)
   git-down https://github.com/ghostty-org/ghostty $source --tag v1.1.3
@@ -272,15 +272,16 @@ export def hargo [] {
 }
 
 export def nchat [--deps(-d)] {
+  if $deps {
+    # bash make.sh deps
+    apt update
+    apt install ccache cmake build-essential gperf help2man libreadline-dev libssl-dev libncurses-dev libncursesw5-dev ncurses-doc zlib1g-dev libsqlite3-dev libmagic-dev
+  }
+
   let path = ($env.USR_LOCAL_SOURCE | path join nchat)
   git-down https://github.com/d99kris/nchat $path
 
   with-wd $path {||
-    if $deps {
-      # bash make.sh deps
-      sudo apt update
-      sudo apt install -y ccache cmake build-essential gperf help2man libreadline-dev libssl-dev libncurses-dev libncursesw5-dev ncurses-doc zlib1g-dev libsqlite3-dev libmagic-dev
-    }
     bash make.sh build
     bash make.sh install
   }
@@ -383,7 +384,7 @@ export def contour [] {
 }
 
 export def chafa [] {
-  sudo apt install -y libavif-dev librsvg2-dev libjxl-dev
+  apt install libavif-dev librsvg2-dev libjxl-dev
 
   let path = ($env.USR_LOCAL_SOURCE | path join chafa)
   git-down https://github.com/hpjansson/chafa.git $path
@@ -396,12 +397,13 @@ export def chafa [] {
 }
 
 export def cosmic-clipboard-manager [] {
+  apt install libsqlite3-dev sqlite3 just cargo libxkbcommon-dev git-lfs
+
   let path = ($env.USR_LOCAL_SOURCE | path join cosmic-clipboard-manager)
   git-down https://github.com/cosmic-utils/clipboard-manager.git $path
 
   with-wd $path {||
     # git checkout '0.1.0'
-    sudo apt install libsqlite3-dev sqlite3 just cargo libxkbcommon-dev git-lfs
     just build-release
     sudo just install
   }
@@ -463,10 +465,10 @@ export def virtualpen [] {
 }
 
 export def miraclecast [] {
-  sudo apt install -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0
-  sudo apt install -y ubuntu-restricted-extras gstreamer1.0 libglib2.0-dev libreadline-dev libudev-dev libsystemd-dev libusb-dev build-essential
+  apt install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0
+  apt install ubuntu-restricted-extras gstreamer1.0 libglib2.0-dev libreadline-dev libudev-dev libsystemd-dev libusb-dev build-essential
 
-  sudo apt install -y cmake libglib2.0-dev libudev-dev libsystemd-dev libreadline-dev check libtool
+  apt install cmake libglib2.0-dev libudev-dev libsystemd-dev libreadline-dev check libtool
 
   let path = ($env.USR_LOCAL_SOURCE | path join miraclecast)
   git-down https://github.com/albfan/miraclecast.git $path
@@ -478,4 +480,19 @@ export def miraclecast [] {
     make
     sudo make install
   }
+}
+
+export def termfilechooser [] {
+  apt install xdg-desktop-portal build-essential ninja-build meson libinih-dev libsystemd-dev scdoc
+
+  let path = ($env.USR_LOCAL_SOURCE | path join termfilechooser)
+  git-down https://github.com/hunkyburrito/xdg-desktop-portal-termfilechooser.git $path
+
+  with-wd $path {||
+    meson build
+    sudo ninja -C build
+    sudo ninja -C build install
+  }
+
+  cp -r /usr/local/share/xdg-desktop-portal-termfilechooser ($env.HOME | path join .config/xdg-desktop-portal-termfilechooser)
 }

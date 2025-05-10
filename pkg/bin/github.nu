@@ -62,8 +62,7 @@ export def --env helix [ --force(-f) ] {
   bind-dir $path $env.HELIX_PATH
   env-path $env.HELIX_PATH
 
-  bind-file hx ($env.HELIX_PATH | path join hx)
-  bind-root hx ($env.HELIX_PATH | path join hx)
+  bind-root hx ($path | path join hx)
 }
 
 export def --env nushell [ --force(-f) ] {
@@ -150,6 +149,23 @@ export def fd [ --force(-f) ] {
 
   bind-file fd $path
   bind-root fd $path
+}
+
+export def --env yazi [ --force(-f) ] {
+  let repository = 'sxyazi/yazi'
+  let tag_name = ghub tag_name $repository
+  let path = lib-path yazi $tag_name
+
+  if (path-not-exists $path $force) {
+    let download_path = ghub asset download -x $repository --force=($force)
+    move -d $download_path -p $path
+  }
+
+  bind-dir $path $env.YAZI_BIN
+  env-path $env.YAZI_BIN
+
+  bind-root ya ($path | path join ya)
+  bind-root yazi ($path | path join yazi)
 }
 
 export def fzf [ --force(-f) ] {
@@ -1702,20 +1718,6 @@ export def hwatch [ --force(-f) ] {
   }
 
   bind-file hwatch $path
-}
-
-export def --env yazi [ --force(-f) ] {
-  let repository = 'sxyazi/yazi'
-  let tag_name = ghub tag_name $repository
-  let path = lib-path yazi $tag_name
-
-  if (path-not-exists $path $force) {
-    let download_path = ghub asset download -x $repository --force=($force)
-    move -d $download_path -p $path
-  }
-
-  bind-dir $path $env.YAZI_BIN
-  env-path $env.YAZI_BIN
 }
 
 export def kmon [ --force(-f) ] {
