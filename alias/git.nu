@@ -4,6 +4,7 @@ alias gme = gitmoji -c
 alias gcm = git-commit
 alias ghi = git-history
 alias gsf = git-show-filter
+alias gcd = git-clone-cd
 
 alias gra = git remote add
 alias grr = git remote rename

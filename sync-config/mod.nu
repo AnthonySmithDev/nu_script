@@ -165,6 +165,12 @@ export def git [] {
   ^git config --global user.email $env.GIT_USER_EMAIL
 }
 
+export def qmk [] {
+  ^qmk config user.bootloader=avrdude
+  ^qmk config user.keyboard=lily58/r2g
+  ^qmk config user.keymap=anthony_smith
+}
+
 export def core [] {
   nushell
   helix
